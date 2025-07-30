@@ -2,6 +2,11 @@ import os
 import io
 import base64
 import datetime
+import webbrowser
+import threading
+import time
+import atexit
+
 from flask import Flask, render_template, request, send_file, jsonify
 import qrcode
 from qrcode.image.styledpil import StyledPilImage
@@ -14,9 +19,7 @@ from qrcode.image.styles.colormasks import (
     SquareGradiantColorMask, HorizontalGradiantColorMask,
     VerticalGradiantColorMask
 )
-from PIL import Image
 from decimal import Decimal
-import tempfile
 import uuid
 
 app = Flask(__name__)
@@ -300,12 +303,9 @@ def cleanup_temp_files():
         del temp_files[key]
 
 # Register cleanup function
-import atexit
 atexit.register(cleanup_temp_files)
 
-import webbrowser
-import threading
-import time
+
 
 def open_browser():
     """Open the browser after a short delay to ensure the server is up"""
@@ -313,8 +313,9 @@ def open_browser():
     webbrowser.open('http://localhost:5000')
 
 if __name__ == '__main__':
-    # Start a thread to open the browser
-    threading.Thread(target=open_browser).start()
-    
     # Disable auto-reloader but keep debug mode to fix issues with paths containing spaces
     app.run(debug=True, use_reloader=False)
+
+    # Start a thread to open the browser
+    threading.Thread(target=open_browser).start()
+
