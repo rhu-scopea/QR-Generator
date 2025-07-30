@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QR Code Generator</h1>
+            <p>Create customized QR codes for your needs</p>
+        </header>
+
+        <div class="main-content">
+            <div class="form-container">
+                <form id="qr-form">
+                    <!-- Data Input -->
+                    <div class="form-section">
+                        <h2>QR Code Data</h2>
+                        <div class="form-group">
+                            <label for="data">Data to encode:</label>
+                            <input type="text" id="data" name="data" value="https://example.com" required>
+                            <small>Enter the text, URL, or data you want to encode in the QR code</small>
+                        </div>
+                    </div>
+
+                    <!-- Basic Settings -->
+                    <div class="form-section">
+                        <h2>Basic Settings</h2>
+                        
+                        <div class="form-group">
+                            <label for="version">Version:</label>
+                            <select id="version" name="version">
+                                <option value="auto" selected>Auto</option>
+                                <!-- Options 1-40 will be added by JavaScript -->
+                            </select>
+                            <small>Controls the size of the QR code (1-40, or Auto)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Error Correction:</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="error_correction" value="L">
+                                    L - Low (7%)
+                                </label>
+                                <label>
+                                    <input type="radio" name="error_correction" value="M" checked>
+                                    M - Medium (15%)
+                                </label>
+                                <label>
+                                    <input type="radio" name="error_correction" value="Q">
+                                    Q - Quartile (25%)
+                                </label>
+                                <label>
+                                    <input type="radio" name="error_correction" value="H">
+                                    H - High (30%)
+                                </label>
+                            </div>
+                            <small>Higher error correction allows the QR code to be readable even if partially damaged</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="box_size">Box Size:</label>
+                                <input type="number" id="box_size" name="box_size" value="10" min="1" max="100">
+                                <small>Size of each box in pixels</small>
+                            </div>
+                            <div class="form-group half">
+                                <label for="border">Border:</label>
+                                <input type="number" id="border" name="border" value="4" min="0" max="100">
+                                <small>Border width in boxes</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Style Settings -->
+                    <div class="form-section">
+                        <h2>Style Settings</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="fill_color">Fill Color:</label>
+                                <input type="color" id="fill_color" name="fill_color" value="#000000">
+                                <small>Color of the QR code modules</small>
+                            </div>
+                            <div class="form-group half">
+                                <label for="back_color">Background Color:</label>
+                                <input type="color" id="back_color" name="back_color" value="#FFFFFF">
+                                <small>Background color</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="module_drawer">Module Shape:</label>
+                            <select id="module_drawer" name="module_drawer">
+                                <option value="square" selected>Square</option>
+                                <option value="gapped_square">Gapped Square</option>
+                                <option value="circle">Circle</option>
+                                <option value="rounded">Rounded</option>
+                                <option value="vertical_bars">Vertical Bars</option>
+                                <option value="horizontal_bars">Horizontal Bars</option>
+                            </select>
+                            <small>Shape of the QR code modules</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="color_mask">Color Style:</label>
+                            <select id="color_mask" name="color_mask">
+                                <option value="solid" selected>Solid</option>
+                                <option value="radial_gradient">Radial Gradient</option>
+                                <option value="square_gradient">Square Gradient</option>
+                                <option value="horizontal_gradient">Horizontal Gradient</option>
+                                <option value="vertical_gradient">Vertical Gradient</option>
+                            </select>
+                            <small>Color style for the QR code</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="embedded_image">Embedded Image:</label>
+                            <input type="file" id="embedded_image" name="embedded_image" accept="image/*">
+                            <small>Optional: Embed an image in the center of the QR code (use high error correction)</small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="generate-btn" class="btn primary">
+                            <i class="fas fa-qrcode"></i> Generate QR Code
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="preview-container">
+                <h2>QR Code Preview</h2>
+                <div id="qr-preview">
+                    <div class="placeholder">
+                        <i class="fas fa-qrcode"></i>
+                        <p>Your QR code will appear here</p>
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button id="download-btn" class="btn secondary" disabled>
+                        <i class="fas fa-download"></i> Download QR Code
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Powered by qrcode[pil] - A Python QR Code generator</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
