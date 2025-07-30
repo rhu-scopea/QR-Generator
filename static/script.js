@@ -8,21 +8,85 @@ document.addEventListener('DOMContentLoaded', function() {
         versionSelect.appendChild(option);
     }
 
-    // Form submission
+    // Form elements
     const qrForm = document.getElementById('qr-form');
     const generateBtn = document.getElementById('generate-btn');
     const downloadBtn = document.getElementById('download-btn');
     const qrPreview = document.getElementById('qr-preview');
+    const colorMaskSelect = document.getElementById('color_mask');
+    const gradientColorContainer = document.getElementById('gradient_color_container');
+    const fillColorLabel = document.getElementById('fill_color_label');
+    const fillColorHelp = document.getElementById('fill_color_help');
+    const gradientColorLabel = document.getElementById('gradient_color_label');
+    const gradientColorHelp = document.getElementById('gradient_color_help');
     
     // Current QR code ID for download
     let currentQrId = null;
-
-    qrForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+    
+    // Debounce timer
+    let debounceTimer;
+    
+    // Function to update color input labels based on selected color style
+    function updateColorInputs() {
+        const colorStyle = colorMaskSelect.value;
         
-        // Show loading state
-        generateBtn.disabled = true;
-        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        // Show/hide gradient color input based on selected style
+        if (colorStyle === 'solid') {
+            gradientColorContainer.style.display = 'none';
+            fillColorLabel.textContent = 'Fill Color:';
+            fillColorHelp.textContent = 'Color of the QR code modules';
+        } else {
+            gradientColorContainer.style.display = 'flex';
+            
+            // Update labels based on gradient type
+            switch (colorStyle) {
+                case 'radial_gradient':
+                    fillColorLabel.textContent = 'Center Color:';
+                    fillColorHelp.textContent = 'Color at the center of the QR code';
+                    gradientColorLabel.textContent = 'Edge Color:';
+                    gradientColorHelp.textContent = 'Color at the edges of the QR code';
+                    break;
+                case 'square_gradient':
+                    fillColorLabel.textContent = 'Center Color:';
+                    fillColorHelp.textContent = 'Color at the center of the QR code';
+                    gradientColorLabel.textContent = 'Edge Color:';
+                    gradientColorHelp.textContent = 'Color at the edges of the QR code';
+                    break;
+                case 'horizontal_gradient':
+                    fillColorLabel.textContent = 'Left Color:';
+                    fillColorHelp.textContent = 'Color on the left side of the QR code';
+                    gradientColorLabel.textContent = 'Right Color:';
+                    gradientColorHelp.textContent = 'Color on the right side of the QR code';
+                    break;
+                case 'vertical_gradient':
+                    fillColorLabel.textContent = 'Top Color:';
+                    fillColorHelp.textContent = 'Color at the top of the QR code';
+                    gradientColorLabel.textContent = 'Bottom Color:';
+                    gradientColorHelp.textContent = 'Color at the bottom of the QR code';
+                    break;
+            }
+        }
+    }
+    
+    // Initialize color inputs based on default selection
+    updateColorInputs();
+    
+    // Add event listener for color style changes
+    colorMaskSelect.addEventListener('change', function() {
+        updateColorInputs();
+        debouncedGenerateQRCode();
+    });
+    
+    // Function to generate QR code
+    function generateQRCode(showLoading = true) {
+        // Clear any previous debounced calls
+        clearTimeout(debounceTimer);
+        
+        // Show loading state if requested
+        if (showLoading) {
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        }
         
         // Clear any previous error messages
         const errorMessage = document.querySelector('.error-message');
@@ -71,7 +135,38 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show error message
             showError('An error occurred: ' + error.message);
         });
+    }
+    
+    // Debounced function to generate QR code after input changes
+    function debouncedGenerateQRCode() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            generateQRCode(false); // Don't show loading state for automatic updates
+        }, 500); // 500ms debounce time
+    }
+    
+    // Form submission (manual generation)
+    qrForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateQRCode(true); // Show loading state for manual generation
     });
+    
+    // Add event listeners to all form inputs for automatic generation
+    const formInputs = qrForm.querySelectorAll('input, select');
+    formInputs.forEach(input => {
+        if (input.type === 'radio') {
+            input.addEventListener('change', debouncedGenerateQRCode);
+        } else if (input.type === 'file') {
+            input.addEventListener('change', debouncedGenerateQRCode);
+        } else {
+            // For text, number, color inputs and select dropdowns
+            input.addEventListener('input', debouncedGenerateQRCode);
+            input.addEventListener('change', debouncedGenerateQRCode);
+        }
+    });
+    
+    // Generate initial QR code on page load
+    generateQRCode(true);
     
     // Download button click
     downloadBtn.addEventListener('click', function() {

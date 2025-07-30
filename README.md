@@ -7,6 +7,7 @@ A user-friendly web interface for generating customized QR codes using the Pytho
 ## Features
 
 - Generate QR codes from any text, URL, or data
+- Real-time preview updates as you change settings
 - Customize QR code appearance:
   - Size and version
   - Error correction level
@@ -52,7 +53,7 @@ This will install all the required dependencies, including:
 python app.py
 ```
 
-4. Open your web browser and go to: http://127.0.0.1:5000
+The application will automatically open your default web browser to the application's homepage (http://localhost:5000).
 
 ### Generating a QR Code
 
@@ -64,15 +65,18 @@ python app.py
    - **Border**: Width of the border around the QR code
 
 3. Customize the appearance:
-   - **Fill Color**: Color of the QR code modules
+   - **Fill Color**: Color of the QR code modules (for solid style) or first color for gradients
    - **Background Color**: Background color of the QR code
+   - **Gradient End Color**: Second color for gradient styles (appears when a gradient style is selected)
    - **Module Shape**: Shape of the QR code modules (Square, Circle, Rounded, etc.)
-   - **Color Style**: Style of coloring (Solid, Radial Gradient, etc.)
+   - **Color Style**: Style of coloring (Solid, Radial Gradient, Square Gradient, etc.)
    - **Embedded Image**: Optionally embed an image in the center of the QR code
 
-4. Click the "Generate QR Code" button
-5. The generated QR code will appear in the preview area
-6. Click "Download QR Code" to save the image to your computer
+4. The QR code preview updates automatically as you change any setting
+   - Changes are debounced (500ms delay) to prevent excessive processing
+   - You can still click the "Generate QR Code" button to manually refresh the preview
+
+5. Click "Download QR Code" to save the image to your computer
 
 ### Tips for Best Results
 
